@@ -1002,7 +1002,8 @@ def ajax_srp_request_approve(
         srp_isk_loss = srp_request.loss_amount
 
         if srp_payout == 0:
-            srp_request.payout_amount = srp_isk_loss
+            platinum_payout = [d for d in srp_request.insurance.filter(srp_request=srp_request) if d.insurance_level == 'Platinum'][0].insurance_payout
+            srp_request.payout_amount = srp_isk_loss - platinum_payout
 
         # Remove any possible reject reason in case this was rejected before
         AaSrpRequestComment.objects.filter(
