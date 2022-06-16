@@ -733,6 +733,14 @@ def ajax_srp_link_view_requests_data(
         )
         character_sort = get_formatted_character_name(character=srp_request.character)
 
+        # This is a terrible hack to set a default payout value.
+        # TODO: Clean up retrieval of platinum payout value
+        # MAYBE: Allow payout definition via setting, ideally configurable per program???
+        if (srp_request.payout_amount == 0):
+            platinum_payout = [d for d in srp_request.insurance.filter(srp_request=srp_request) if d.insurance_level == 'Platinum'][0].insurance_payout
+            srp_request.payout_amount = srp_request.loss_amount
+            srp_request.payout_amount -= platinum_payout
+
         data.append(
             {
                 "request_time": srp_request.post_time,
